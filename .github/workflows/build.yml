@@ -1,0 +1,32 @@
+name: Build WASM Kernel
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Emscripten
+      uses: mymindstorm/setup-emsdk@v12
+      with:
+        version: latest
+    
+    - name: Build
+      run: |
+        emcc my-kernel.cpp -o my-kernel.js \
+          -O3 -s WASM=1 -s MODULARIZE=1 \
+          -s EXPORT_NAME="createMyKernel" \
+          -s ALLOW_MEMORY_GROWTH=1 --bind
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: wasm-kernel
+        path: |
+          my-kernel.js
+          my-kernel.wasm

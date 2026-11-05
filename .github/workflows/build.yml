@@ -22,7 +22,8 @@ jobs:
         -std=c++17 \
           -O3 -s WASM=1 -s MODULARIZE=1 \
           -s EXPORT_NAME="createMyKernel" \
-          -s ALLOW_MEMORY_GROWTH=1 --bind
+          -s ALLOW_MEMORY_GROWTH=1 \
+          --bind
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4

@@ -18,7 +18,7 @@ jobs:
     
     - name: Build
       run: |
-        emcc my-kernel.cpp -o my-kernel.js \
+        em++ my-kernel.cpp -o my-kernel.js \
         -std=c++17 \
           -O3 -s WASM=1 -s MODULARIZE=1 \
           -s EXPORT_NAME="createMyKernel" \

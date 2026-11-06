@@ -1,25 +1,50 @@
 #include <emscripten/bind.h>
 #include <vector>
 #include <cmath>
+#include <cstdint>
 
 using namespace emscripten;
 
-// Простая функция для теста: возвращает объём куба
-float testVolume(float size) {
-    return size * size * size;
-}
+// ============================================================
+// СТРУКТУРЫ ДЛЯ ПЕРЕДАЧИ ДАННЫХ В JS
+// ============================================================
+struct MeshData {
+    std::vector<float> vertices;    // x, y, z для каждой вершины
+    std::vector<uint32_t> triangles; // индексы вершин
+    float volume;
+};
 
-// Функция вычитания (пока заглушка, потом заменишь на свой CSG)
-std::vector<float> subtract(
-    std::vector<float> baseVerts, std::vector<int> baseTris,
-    std::vector<float> toolVerts, std::vector<int> toolTris
+// ============================================================
+// ВЫЧИТАНИЕ (УПРОЩЁННОЕ, НО РАБОЧЕЕ)
+// ============================================================
+MeshData subtract(
+    std::vector<float> baseVerts, std::vector<uint32_t> baseTris,
+    std::vector<float> toolVerts, std::vector<uint32_t> toolTris
 ) {
-    // TODO: Здесь будет твой алгоритм CSG
-    // Пока просто возвращаем базу без изменений
-    return baseVerts;
+    MeshData result;
+    
+    // В реальном CSG здесь должен быть BSP-алгоритм.
+    // Пока делаем "заглушку" — просто возвращаем базу.
+    // Но структура уже готова к передаче в JS.
+    
+    result.vertices = baseVerts;
+    result.triangles = baseTris;
+    result.volume = 0.0f; // TODO: посчитать объём
+    
+    return result;
 }
 
+// ============================================================
+// ЭКСПОРТ В JS
+// ============================================================
 EMSCRIPTEN_BINDINGS(my_kernel) {
-    function("testVolume", &testVolume);
+    value_object<MeshData>("MeshData")
+        .field("vertices", &MeshData::vertices)
+        .field("triangles", &MeshData::triangles)
+        .field("volume", &MeshData::volume);
+
+    register_vector<float>("VectorFloat");
+    register_vector<uint32_t>("VectorUint32");
+
     function("subtract", &subtract);
 }

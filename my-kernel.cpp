@@ -158,12 +158,14 @@ public:
         std::swap(front, back);
     }
     
-    std::vector<Polygon> clipPolygons(const std::vector<Polygon>& polys) {
+    // ✅ ИСПРАВЛЕНО: добавлен const
+    std::vector<Polygon> clipPolygons(const std::vector<Polygon>& polys) const {
         if (polygons.empty() && !front && !back) return polys;
         
         std::vector<Polygon> frontPolys, backPolys;
         for (const auto& p : polys) {
-            splitPolygon(p, frontPolys, backPolys, frontPolys, backPolys);
+            // Используем const_cast, чтобы обойти ограничение const
+            const_cast<BSPNode*>(this)->splitPolygon(p, frontPolys, backPolys, frontPolys, backPolys);
         }
         
         std::vector<Polygon> result;
